@@ -71,7 +71,7 @@ class MoViNetWithLocalization(MoViNet):
         x_loc = x_loc.flatten(1)
         return x_cls, x_loc
 
-class KickPunchDataset(Dataset):
+class ActionDataset(Dataset):
     def __init__(self, data, labels, n_frames, transform=None):
         self.data = [(x, y) for x, y in zip(data, labels)]
 #         self.labels = labels
@@ -386,8 +386,8 @@ if __name__ == "__main__":
         # T.CenterCrop((172, 172))
     ])
         
-    train_dataset = KickPunchDataset(list(train_dict.keys()), list(train_dict.values()), 15, transform=transform) # old
-    test_dataset = KickPunchDataset(list(val_dict.keys()), list(val_dict.values()), 15, transform=transform_test) # old
+    train_dataset = ActionDataset(list(train_dict.keys()), list(train_dict.values()), 100, transform=transform) # old
+    test_dataset = ActionDataset(list(val_dict.keys()), list(val_dict.values()), 100, transform=transform_test) # old
 
     # Create a DataLoader
     batch_size = 4
@@ -403,7 +403,7 @@ if __name__ == "__main__":
 
     # Load the streaming model
 
-    model = MoViNetWithLocalization(_C.MODEL.MoViNetA2, causal = False, pretrained = True)
+    model = MoViNetWithLocalization(_C.MODEL.MoViNetA0, causal = False, pretrained = True)
 
     weight_tensor = torch.Tensor(list(class_weights.values()))
     print(weight_tensor)
@@ -431,9 +431,9 @@ if __name__ == "__main__":
         train_iter(model, optimz, train_dataloader, trloss_val, epoch, class_weight=weight_tensor.cuda())#, scheduler=scheduler
         current_val_accuracy, current_val_tiou = evaluate(model, test_dataloader, tsloss_val)
         if current_val_accuracy > best_accuracy:
-            torch.save(model, f"weights/movinet_a2_base_w_loc_ft_{epoch}_epoch_val_acc_{str(round(current_val_accuracy, 4)).replace('.', '_')}.pth")
-            if os.path.exists(f"weights/movinet_a2_base_w_loc_ft_{last_epoch_checkpoint}_epoch_val_acc_{str(round(best_accuracy, 4)).replace('.', '_')}.pth"):
-                os.remove(f"weights/movinet_a2_base_w_loc_ft_{last_epoch_checkpoint}_epoch_val_acc_{str(round(best_accuracy, 4)).replace('.', '_')}.pth")
+            torch.save(model, f"weights/movinet_a0_base_w_loc_ft_{epoch}_epoch_val_acc_{str(round(current_val_accuracy, 4)).replace('.', '_')}.pth")
+            if os.path.exists(f"weights/movinet_a0_base_w_loc_ft_{last_epoch_checkpoint}_epoch_val_acc_{str(round(best_accuracy, 4)).replace('.', '_')}.pth"):
+                os.remove(f"weights/movinet_a0_base_w_loc_ft_{last_epoch_checkpoint}_epoch_val_acc_{str(round(best_accuracy, 4)).replace('.', '_')}.pth")
             best_accuracy = current_val_accuracy
             last_epoch_checkpoint = epoch
             print(f"Checkpoint saved on {epoch} epoch!")
