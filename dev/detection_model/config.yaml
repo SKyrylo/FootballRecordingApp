@@ -1,0 +1,13 @@
+# Path to the dataset root directory
+path: /home/kyrylo/dev/temp/temp
+
+# Relative paths to the training, validation and test images directories
+train: images/train
+val: images/val
+test: images/test # Optional
+
+# Number of classes:
+nc: 2
+
+# Class names:
+names: ['ball', 'person']
